@@ -1,43 +1,45 @@
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const storedUser = await AsyncStorage.getItem("user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    };
-    loadUser();
-  }, []);
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    router.replace("/"); // 👈 tu login es index
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>👋 Bienvenida</Text>
+      <Text style={styles.title}>🐾 VET APP</Text>
+      <Text style={styles.subtitle}>Panel Principal</Text>
 
-      <Text style={styles.subtitle}>
-        {user ? user.full_name : "Usuario autenticado"}
-      </Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/appointments")}
+      >
+        <Text style={styles.buttonText}>📅 Gestión de Citas</Text>
+      </TouchableOpacity>
 
-    <TouchableOpacity
-  style={styles.logout}
-  onPress={async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("user");
-    router.replace("/");
-  }}
->
-  <Text style={styles.logoutText}>Cerrar sesión</Text>
-</TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/patients")}
+      >
+        <Text style={styles.buttonText}>🐶 Pacientes</Text>
+      </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/owners")}
+      >
+        <Text style={styles.buttonText}>👤 Dueños</Text>
+      </TouchableOpacity>
 
-
+      {/* 🔴 BOTÓN CERRAR SESIÓN */}
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutText}>Cerrar Sesión</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -45,28 +47,52 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#3D5B37",
+    padding: 20,
+    justifyContent: "center",
   },
+
   title: {
-    fontSize: 26,
+    fontSize: 28,
+    fontWeight: "bold",
     color: "#E8FFC8",
-    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
   },
+
   subtitle: {
-    fontSize: 18,
-    color: "#FFF",
-    marginTop: 8,
+    fontSize: 16,
+    color: "#CFE8A9",
+    textAlign: "center",
+    marginBottom: 40,
   },
-  logout: {
-    marginTop: 20,
-    backgroundColor: "#C94A4A",
-    padding: 12,
-    borderRadius: 8,
+
+  button: {
+    backgroundColor: "#A6C48A",
+    padding: 18,
+    borderRadius: 12,
+    marginBottom: 20,
+    elevation: 3,
   },
-  logoutText: {
-    color: "#fff",
+
+  buttonText: {
+    textAlign: "center",
     fontWeight: "bold",
+    fontSize: 16,
+    color: "#1F2D17",
+  },
+
+  logoutButton: {
+    backgroundColor: "#C94A4A",
+    padding: 14,
+    borderRadius: 8,
+    marginTop: 30,
+  },
+
+  logoutText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#fff",
   },
 });
