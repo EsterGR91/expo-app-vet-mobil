@@ -6,8 +6,20 @@ export default function Dashboard() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await AsyncStorage.clear();
-    router.replace("/"); // 👈 tu login es index
+    try {
+      const tokenBefore = await AsyncStorage.getItem("token");
+      console.log("ANTES DE BORRAR:", tokenBefore);
+
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("user");
+
+      const tokenAfter = await AsyncStorage.getItem("token");
+      console.log("DESPUÉS DE BORRAR:", tokenAfter);
+
+      router.replace("/");
+    } catch (error) {
+      console.log("Error cerrando sesión:", error);
+    }
   };
 
   return (
@@ -36,7 +48,6 @@ export default function Dashboard() {
         <Text style={styles.buttonText}>👤 Dueños</Text>
       </TouchableOpacity>
 
-      {/* 🔴 BOTÓN CERRAR SESIÓN */}
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Cerrar Sesión</Text>
       </TouchableOpacity>
@@ -51,7 +62,6 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
   },
-
   title: {
     fontSize: 28,
     fontWeight: "bold",
@@ -59,36 +69,30 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
-
   subtitle: {
     fontSize: 16,
     color: "#CFE8A9",
     textAlign: "center",
     marginBottom: 40,
   },
-
   button: {
     backgroundColor: "#A6C48A",
     padding: 18,
     borderRadius: 12,
     marginBottom: 20,
-    elevation: 3,
   },
-
   buttonText: {
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
     color: "#1F2D17",
   },
-
   logoutButton: {
     backgroundColor: "#C94A4A",
     padding: 14,
     borderRadius: 8,
     marginTop: 30,
   },
-
   logoutText: {
     textAlign: "center",
     fontWeight: "bold",
